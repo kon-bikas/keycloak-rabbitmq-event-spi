@@ -2,20 +2,27 @@ pipeline {
     agent any
 
     environment {
-        DOCKER_TOKEN = credentials('docker-push-secret')
+        DOCKER_TOKEN = credentials('docker-push-secrer')
         DOCKER_USER = 'kon-bikas'
         DOCKER_SERVER = 'ghcr.io'
         DOCKER_PREFIX = 'ghcr.io/kon-bikas/keycloak-event-spi'
     }
 
     stages {
+        stage('Creating new jar to test') {
+            steps {
+                sh '''
+                    ./mvnw clean package -Dmaven.test.skip
+                '''
+            }
+        }
         stage('Testing project') {
             options {
                 timeout(time: 10, units: 'MINUTES')
             }
             steps {
                 sh '''
-                    echo "Strating tests..."
+                    echo "Starting tests..."
                     ./mvnw test
                 '''
             }
@@ -26,7 +33,7 @@ pipeline {
             }
             steps {
                 sh '''
-                    docker build --rm -t $DOCKER_PREFIX:latest . 
+                    docker build --rm -t $DOCKER_PREFIX:latest -f without-builder.Dockerfile . 
                 '''
 
                 sh '''
