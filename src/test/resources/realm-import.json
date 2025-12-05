@@ -1,0 +1,66 @@
+{
+    "realm": "demo-realm",
+    "enabled": true,
+    "eventsEnabled": true,
+    "eventsListeners": [
+        "jboss-logging",
+        "test-listener"
+    ],
+    "registrationAllowed": true,
+
+    "roles": {
+        "client": {
+            "demo-client": [
+                {
+                    "name": "ROLE_USER",
+                    "clientRole": true
+                },
+                {
+                    "name": "ROLE_ADMIN",
+                    "clientRole": true
+                }
+            ]
+        }
+
+    },
+
+    "users": [
+        {
+            "enabled": true,
+            "username": "konnos",
+            "firstName": "Kostas",
+            "lastName": "Bikas",
+            "email": "kon@hua.gr",
+            "createdTimestamp": 1758499200000,
+            "credentials": [
+                {
+                    "type": "password",
+                    "value": "konnos",
+                    "temporary": false
+                }
+            ],
+            "clientRoles": {
+                "demo-client": ["ROLE_USER","ROLE_ADMIN"]
+            },
+            "attributes": {
+                "nickname": ["kon"]
+            }
+
+        }
+    ],
+    "clients": [
+        {
+            "clientId": "demo-client",
+            "name": "demo-client",
+            "enabled": true,
+            "protocol": "openid-connect",
+            "publicClient": true,
+            "redirectUris": ["*"],
+            "rootUrl": "http://localhost:9090",
+            "defaultRoles": ["ROLE_USER"]
+
+        }
+
+    ]
+
+}

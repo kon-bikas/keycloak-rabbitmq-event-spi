@@ -1,0 +1,1 @@
+readme file for keycloak-event-spi

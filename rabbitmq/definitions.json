@@ -1,0 +1,68 @@
+{
+    "users": [
+        {
+            "name": "app",
+            "password": "app",
+            "tags": ""
+        },
+        {
+            "name": "admin",
+            "password": "admin",
+            "tags": "administrator"
+        }
+    ],
+    "vhosts": [
+        {
+            "name": "/"
+        },
+        {
+            "name": "service"
+        }
+    ],
+    "permissions": [
+        {
+            "user": "admin",
+            "vhost": "service",
+            "configure": ".*",
+            "write": ".*",
+            "read": ".*"
+        },
+        {
+            "user": "app",
+            "vhost": "service",
+            "configure": "app.*",
+            "write": "app.*",
+            "read": "app.*"
+        }
+    ],
+    "queues": [
+        {
+            "name": "app.queue",
+            "vhost": "service",
+            "durable": true,
+            "auto_delete": false,
+            "arguments": {}
+        }
+    ],
+    "exchanges": [
+        {
+            "name": "app.exchange",
+            "vhost": "service",
+            "type": "topic",
+            "durable": true,
+            "auto_delete": false,
+            "internal": false,
+            "arguments": {}
+        }
+    ],
+    "bindings": [
+        {
+            "source": "app.exchange",
+            "vhost": "service",
+            "destination": "app.queue",
+            "destination_type": "queue",
+            "routing_key": "#",
+            "arguments": {}
+        }
+    ]
+}

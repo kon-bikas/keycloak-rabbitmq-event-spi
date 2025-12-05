@@ -1,0 +1,37 @@
+services:
+    rabbitmq:
+        image: rabbitmq:4.2-management
+        container_name: rabbitmq-test
+        ports:
+            -   "5672:5672"
+            -   "15672:15672"
+        environment:
+            RABBITMQ_DEFAULT_VHOST: service
+        volumes:
+            -   ./rabbitmq/rabbitmq.conf:/etc/rabbitmq/rabbitmq.conf
+            -   ./rabbitmq/definitions.json:/etc/rabbitmq/definitions.json
+        healthcheck:
+            test: ["CMD", "rabbitmq-diagnostics", "ping"]
+            interval: 5s
+            timeout: 5s
+            retries: 10
+    keycloak:
+        build: .
+        image: keycloak-event:26.4.5
+        command: ["start-dev", "--verbose"]
+        ports:
+            -   "9090:8080"
+        container_name: keycloak-test
+        depends_on:
+            rabbitmq:
+                condition: service_healthy
+        environment:
+            KC_BOOTSTRAP_ADMIN_USERNAME: admin
+            KC_BOOTSTRAP_ADMIN_PASSWORD: admin
+            KC_SPI_EVENTS_LISTENER_TEST_LISTENER_ENABLED: true
+            KC_SPI_EVENTS_LISTENER_TEST_LISTENER_RABBIT_HOST: rabbitmq
+            KC_SPI_EVENTS_LISTENER_TEST_LISTENER_RABBIT_PORT: 5672
+            KC_SPI_EVENTS_LISTENER_TEST_LISTENER_RABBIT_USERNAME: admin
+            KC_SPI_EVENTS_LISTENER_TEST_LISTENER_RABBIT_PASSWORD: admin
+            KC_SPI_EVENTS_LISTENER_TEST_LISTENER_RABBIT_EXCHANGE: app.exchange
+            KC_SPI_EVENTS_LISTENER_TEST_LISTENER_RABBIT_VIRTUAL_HOST: service
