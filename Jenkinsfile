@@ -18,7 +18,7 @@ pipeline {
         }
         stage('Testing project') {
             options {
-                timeout(time: 10, units: 'MINUTES')
+                timeout(time: 10, unit: 'MINUTES')
             }
             steps {
                 sh '''
@@ -29,7 +29,7 @@ pipeline {
         }
         stage('Build and push docker image') {
             options {
-                timeout(time: 30, units: 'MINUTES')
+                timeout(time: 30, unit: 'MINUTES')
             }
             steps {
                 sh '''
