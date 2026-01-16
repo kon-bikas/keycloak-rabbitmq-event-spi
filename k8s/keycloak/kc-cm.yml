@@ -1,0 +1,121 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+    name: keycloak-cm
+    namespace: default
+data:
+    keycloak.conf: |
+        bootstrap-admin-username=admin
+        bootstrap-admin-password=admin
+        spi-events-listener-test-listener-enabled=true
+        spi-events-listener-test-listener-rabbit-host=rabbit-svc
+        spi-events-listener-test-listener-rabbit-port=5672
+        spi-events-listener-test-listener-rabbit-username=admin
+        spi-events-listener-test-listener-rabbit-password=admin
+        spi-events-listener-test-listener-rabbit-exchange=app.exchange
+        spi-events-listener-test-listener-rabbit-virtual-host=service
+
+    keycloak.import: |
+        {
+            "realm": "demo-realm",
+            "enabled": true,
+            "eventsEnabled": true,
+            "eventsListeners": [
+                "jboss-logging",
+                "test-listener"
+            ],
+            "registrationAllowed": true,
+            "editUsernameAllowed": true,
+
+            "roles": {
+                "client": {
+                    "demo-client": [
+                        {
+                            "name": "ROLE_USER",
+                            "clientRole": true
+                        },
+                        {
+                            "name": "ROLE_ADMIN",
+                            "clientRole": true
+                        }
+                    ]
+                }
+
+            },
+
+            "users": [
+                {
+                    "enabled": true,
+                    "username": "john",
+                    "firstName": "John",
+                    "lastName": "Doe",
+                    "email": "kon@hua.gr",
+                    "createdTimestamp": 1758499200000,
+                    "credentials": [
+                        {
+                            "type": "password",
+                            "value": "konnos",
+                            "temporary": false
+                        }
+                    ],
+                    "clientRoles": {
+                        "demo-client": ["ROLE_USER","ROLE_ADMIN"]
+                    },
+                    "attributes": {
+                        "nickname": ["kon"]
+                    }
+
+                },
+                {
+                    "enabled": true,
+                    "username": "johnny",
+                    "firstName": "John",
+                    "lastName": "Brooks",
+                    "email": "john@hua.gr",
+                    "createdTimestamp": 1758499200000,
+                    "credentials": [
+                        {
+                            "type": "password",
+                            "value": "johnny",
+                            "temporary": false
+                        }
+                    ],
+                    "clientRoles": {
+                        "demo-client": ["ROLE_USER","ROLE_ADMIN"]
+                    }
+
+                },
+                {
+                    "enabled": true,
+                    "username": "george",
+                    "firstName": "George",
+                    "lastName": "Doe",
+                    "email": "george@hua.gr",
+                    "createdTimestamp": 1758499200000,
+                    "credentials": [
+                        {
+                            "type": "password",
+                            "value": "george",
+                            "temporary": false
+                        }
+                    ],
+                    "clientRoles": {
+                        "demo-client": ["ROLE_USER"]
+                    }
+                }
+            ],
+            "clients": [
+                {
+                    "clientId": "demo-client",
+                    "name": "demo-client",
+                    "enabled": true,
+                    "protocol": "openid-connect",
+                    "publicClient": true,
+                    "redirectUris": ["*"],
+                    "rootUrl": "http://localhost:9090",
+                    "defaultRoles": ["ROLE_USER"]
+                }
+
+            ]
+
+        }

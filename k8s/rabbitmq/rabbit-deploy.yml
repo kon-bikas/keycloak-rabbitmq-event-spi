@@ -1,0 +1,49 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+    name: rabbit-deployment
+    namespace: default
+    labels:
+        app: rabbitmq
+spec:
+    replicas: 1
+    selector:
+        matchLabels:
+            app: rabbitmq
+    template:
+        metadata:
+            labels:
+                app: rabbitmq
+        spec:
+            containers:
+                - name: rabbit-container
+                  image: rabbitmq:4.1-management-alpine
+                  volumeMounts:
+                      - mountPath: /etc/rabbitmq
+                        name: rabbit-volume
+                  ports:
+                      - containerPort: 5672
+                        name: amqp-port
+                      - containerPort: 15672
+                        name: admin-port
+                  readinessProbe:
+                      exec:
+                          command: ["rabbitmq-diagnostics", "ping"]
+                      initialDelaySeconds: 15
+                      periodSeconds: 30
+                      timeoutSeconds: 20
+                  livenessProbe:
+                      exec:
+                          command: ["rabbitmq-diagnostics", "status"]
+                      initialDelaySeconds: 15
+                      periodSeconds: 30
+                      timeoutSeconds: 20
+            volumes:
+                - name: rabbit-volume
+                  configMap:
+                      name: rabbit-cm
+                      items:
+                          - key: rabbit.conf
+                            path: rabbitmq.conf
+                          - key: rabbit.definitions
+                            path: definitions.json

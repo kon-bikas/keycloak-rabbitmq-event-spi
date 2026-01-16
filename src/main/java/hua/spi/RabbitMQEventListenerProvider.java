@@ -92,8 +92,6 @@ public class RabbitMQEventListenerProvider implements EventListenerProvider {
          */
         AdminEventTransaction adminEventTransaction = (AdminEventTransaction) adminEvent;
         this.publishEvent(adminEventTransaction.getEventResponse());
-
-//        this.publishEvent(((AdminEventTransaction) adminEvent).getEventResponse());
     }
 
     private void publishEvent(EventResponse eventResponse) {
@@ -108,21 +106,5 @@ public class RabbitMQEventListenerProvider implements EventListenerProvider {
             channelPool.releaseChannel(channel);
         }
     }
-
-    /*
-     * creating a channel for every provider/thread because Channel is not thread safe (unlike Connection)
-     * and per Rabbitmq documentation:
-     *
-     * "For applications that use multiple threads/processes for processing,
-     * it is very common to open a new channel per thread/process and not share channels between them."
-     * see https://www.rabbitmq.com/docs/channels
-     */
-//    private void createChannel(Connection connection) {
-//        try {
-//            this.channel = connection.createChannel();
-//        } catch (IOException ex) {
-//            logger.error("Error on rabbitmq channel creation!");
-//        }
-//    }
 
 }

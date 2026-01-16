@@ -1,0 +1,44 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+    name: keycloak-deployment
+    namespace: default
+    labels:
+        app: kc
+spec:
+    replicas: 1
+    selector:
+        matchLabels:
+            app: kc
+    template:
+        metadata:
+            labels:
+                app: kc
+        spec:
+            containers:
+                - name: kc-container
+                  image: ghcr.io/kon-bikas/keycloak-event-spi:latest
+                  args: [ "start-dev", "--import-realm" ]
+                  ports:
+                      - name: kc-port
+                        containerPort: 8080
+                  volumeMounts:
+                      - name: kc-conf-volume
+                        mountPath: /opt/keycloak/conf
+                      - name: kc-import-volume
+                        mountPath: /opt/keycloak/data/import
+            volumes:
+                - name: kc-conf-volume
+                  configMap:
+                      name: keycloak-cm
+                      items:
+                          - key: keycloak.conf
+                            path: keycloak.conf
+                - name: kc-import-volume
+                  configMap:
+                      name: keycloak-cm
+                      items:
+                          - key: keycloak.import
+                            path: import.json
+            imagePullSecrets:
+                - name: ghcr-secret

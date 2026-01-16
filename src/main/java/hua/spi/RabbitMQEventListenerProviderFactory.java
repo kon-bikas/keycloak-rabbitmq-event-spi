@@ -1,6 +1,5 @@
 package hua.spi;
 
-import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.ConnectionFactory;
 import org.jboss.logging.Logger;
