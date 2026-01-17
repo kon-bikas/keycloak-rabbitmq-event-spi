@@ -16,8 +16,10 @@ services:
             timeout: 5s
             retries: 10
     keycloak:
-        build: .
         image: keycloak-event:26.4.5
+        build:
+            context: .
+            dockerfile: with-builder.Dockerfile
         command: ["start-dev", "--verbose"]
         ports:
             -   "9090:8080"
