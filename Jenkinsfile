@@ -33,7 +33,7 @@ pipeline {
             }
             steps {
                 sh '''
-                    docker build --rm -t $DOCKER_PREFIX:latest -f without-builder.Dockerfile . 
+                    docker build --rm -t $DOCKER_PREFIX:latest -f with-builder.Dockerfile . 
                 '''
 
                 sh '''
