@@ -12,6 +12,6 @@ spec:
     ports:
         - name: kc-np-port
           protocol: TCP
-          port: 30909
+          port: 8080
           nodePort: 30808
           targetPort: kc-port

@@ -110,7 +110,8 @@ data:
                     "name": "demo-client",
                     "enabled": true,
                     "protocol": "openid-connect",
-                    "publicClient": true,
+                    "publicClient": false,
+                    "secret": "bZALoPEH0PEvZTLQis0ppfmWcZIrGvIX",
                     "redirectUris": ["*"],
                     "rootUrl": "http://localhost:9090",
                     "defaultRoles": ["ROLE_USER"]
