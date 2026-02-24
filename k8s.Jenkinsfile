@@ -39,13 +39,21 @@ pipeline {
                 timeout(time: 30, unit: 'MINUTES')
             }
             steps {
+                script {
+                    def headCommit = sh(
+                            script: "git rev-parse --short HEAD",
+                            returnStdout: true
+                    ).trim()
+
+                    env.TAG = "${headCommit}-${env.BUILD_ID}"
+                }
                 sh '''
-                    docker build --rm -t $DOCKER_PREFIX:latest -f with-builder.Dockerfile . 
-                '''
+                    docker build --rm -t $DOCKER_PREFIX:latest -f with-builder.Dockerfile .
+               '''
 
                 sh '''
                     echo $DOCKER_TOKEN | docker login $DOCKER_SERVER -u $DOCKER_USER --password-stdin
-                    docker push $DOCKER_PREFIX --all-tags 
+                    docker push $DOCKER_PREFIX --all-tags
                 '''
             }
         }
@@ -58,17 +66,16 @@ pipeline {
         }
         stage ('Start docker compose services') {
             steps {
-                sshagent(credentials: ['jenkins-github']) {
-                    dir("${env.DIR_ANSIBLE_PROJECT}") {
-                        ansiblePlaybook(
-                                inventory: 'hosts.yml',
-                                playbook: 'playbooks/spring-docker.yml',
-                                vaultCredentialsId: 'ansible-vault-pass',
-                                extraVars: [
-                                        docker_secret: "${env.DOCKER_TOKEN}"
-                                ]
-                        )
-                    }
+                dir("${env.DIR_ANSIBLE_PROJECT}") {
+                    ansiblePlaybook(
+                            inventory: 'hosts.yml',
+                            playbook: 'playbooks/spring-k8s.yml',
+                            extraVars: [
+                                    new_image: "${env.DOCKER_PREFIX}:${env.TAG}",
+                                    deployment_name: "keycloak-deployment",
+                                    container_name: "kc-container"
+                            ]
+                    )
                 }
             }
         }
