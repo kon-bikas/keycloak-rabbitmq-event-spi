@@ -48,7 +48,7 @@ pipeline {
                     env.TAG = "${headCommit}-${env.BUILD_ID}"
                 }
                 sh '''
-                    docker build --rm -t $DOCKER_PREFIX:latest -f with-builder.Dockerfile .
+                    docker build --rm -t $DOCKER_PREFIX:latest -t $DOCKER_PREFIX:$TAG -f with-builder.Dockerfile .
                '''
 
                 sh '''
